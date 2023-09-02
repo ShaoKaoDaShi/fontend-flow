@@ -6,30 +6,33 @@ pipeline {
     }
     stages {
         stage('拉取gitlab代码') {
-            steps {
+            steps{
                 sh '''if [ -d "vite-project" ]; then
-                        cd vite-project
-                        git pull
-                        echo "Directory exists"
-                    else
-                        git clone http://skds:hengheng123@192.168.1.183/skds/vite-project.git
-                        cd vite-project
-                        echo "Directory does not exist"
-                    fi'''
+                    cd vite-project
+                    git pull
+                    echo "Directory exists"
+                else
+                    git clone http://skds:hengheng123@192.168.1.183/skds/vite-project.git
+                    cd vite-project
+                    echo "Directory does not exist"
+                fi'''
             }
-
         }
         stage('构建web应用') {
             steps {
-                sh "cd vite-project"
-                sh 'pnpm i --registry=https://registry.npmmirror.com/'
-                sh 'pnpm run build'
+                sh '''
+                    cd vite-project
+                    pnpm i --registry=https://registry.npmmirror.com/
+                    pnpm run build
+                '''
             }
         }
         stage('部署到服务器') {
             steps {
-                sh "cd vite-project"
-                sh 'scp -P 9004 -r dist/* root@192.168.1.183:/home/vite'
+                sh '''
+                    cd vite-project
+                    scp -P 9004 -r dist/* root@192.168.1.183:/home/vite
+                '''
             }
         }
     }
